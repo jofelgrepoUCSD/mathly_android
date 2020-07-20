@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.INotificationSideChannel;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +29,10 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.example.mathly.data.Post;
+import com.example.mathly.data.remote.APIService;
+import com.example.mathly.data.remote.ApiUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,12 +43,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 public class ScanImage extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 102;
     public static final int GALLERY_REQUEST_CODE = 105;
+    private APIService mAPIService;
     ImageView selectedImage;
-    Button camera_button,gallery_button,button_con;
+    Button camera_button,gallery_button,send_button;
     String currentPhotoPath;
 
     @Override
@@ -55,6 +69,7 @@ public class ScanImage extends AppCompatActivity {
         camera_button = findViewById(R.id.camera_button);
         gallery_button = findViewById(R.id.gallery_button);
         gallery_button = findViewById(R.id.gallery_button);
+        send_button = findViewById(R.id.send);
 
         camera_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,9 +126,14 @@ public class ScanImage extends AppCompatActivity {
 
         super.onActivityResult(requestCode,resultCode,data);
 
+
+        /**
+         *  Where user hit the scan button it then encodes it to  it to base64
+         *  TODO: put this string to JSON?
+         *        make a POST request ???
+         */
         if(requestCode == REQUEST_CODE ){
-//            Bitmap image = (Bitmap)data.getExtras().get("data");
-//            selectedImage.setImageBitmap(image);
+
             File f = new File(currentPhotoPath);
             selectedImage.setImageURI(Uri.fromFile(f));
             Log.d("tag","Absolute Url of Image is " + Uri.fromFile(f));
@@ -124,22 +144,30 @@ public class ScanImage extends AppCompatActivity {
             try {
                 final InputStream imageStream = getContentResolver().openInputStream(contentUri);
                 final Bitmap bm = BitmapFactory.decodeStream(imageStream);
-                String encodedImage = encodeImge(bm);
+                final String encodedImage = encodeImge(bm);
                 System.out.println("Worked");
-                System.out.println(encodedImage);
+//                System.out.println(encodedImage);
                 System.out.println("End");
+
+
+                mAPIService = ApiUtils.getAPIService();
+
+                send_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(!TextUtils.isEmpty(encodedImage)){
+                            sendPost(encodedImage);
+                        }
+                    }
+                });
+
             } catch (FileNotFoundException e) {
 
                 e.printStackTrace();
             }
 
-
-
         }
         if(requestCode == GALLERY_REQUEST_CODE ){
-//            Bitmap image = (Bitmap)data.getExtras().get("data");
-//            selectedImage.setImageBitmap(image);
-
 
             Uri contentUri = data.getData();
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -149,6 +177,39 @@ public class ScanImage extends AppCompatActivity {
 
         }
     }
+    public void sendPost(String encodedImage){
+        mAPIService.savePost(encodedImage,1).enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                System.out.println("onResponse");
+                System.out.println(response.errorBody().toString());
+
+                if(response.isSuccessful()){
+                    System.out.println(response.body().toString());
+                    System.out.println("BITCH");
+                    Log.i("tag","posted!" + response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                System.out.println("Failed to post it");
+                Log.e("tag", "YOU FAIL");
+                t.printStackTrace();
+            }
+        });
+
+
+
+
+
+
+
+    }
+
+
+
+
 
     private String getFileExt(Uri contentUri) {
 
@@ -199,5 +260,6 @@ public class ScanImage extends AppCompatActivity {
 
         return encImage;
     }
+
 
 }
