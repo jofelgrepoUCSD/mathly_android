@@ -2,40 +2,49 @@ package com.example.mathly.data;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 public class Post {
 
 
-    @SerializedName("base64")
+    @SerializedName("src")
     @Expose
-    private String base64;
-
-    @SerializedName("userId")
+    private String src;
+    @SerializedName("formats")
     @Expose
-    private Integer userId;
+    private List<String> formats = null;
+    @SerializedName("data_options")
+    @Expose
+    private DataOptions dataOptions;
 
-    public Post(String base64, Integer userId) {
-        this.base64 = base64;
-        this.userId = userId;
-    }
-
-    public String getBase64() {
-        return base64;
-    }
-    public void setBase64(String base64) {
-        this.base64 = base64;
-    }
-    public Integer getUserId() {
-        return userId;
-    }
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public Post(String src, List<String> formats, DataOptions dataOptions) {
+        this.src = src;
+        this.formats = formats;
+        this.dataOptions = dataOptions;
     }
 
-    @Override
-    public String toString() {
-        return "Post{" +
-                "base64='" + base64 + '\'' +
-                ", userId=" + userId +
-                '}';
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
+    }
+
+    public List<String> getFormats() {
+        return formats;
+    }
+
+    public void setFormats(List<String> formats) {
+        this.formats = formats;
+    }
+
+    public DataOptions getDataOptions() {
+        return dataOptions;
+    }
+
+    public void setDataOptions(DataOptions dataOptions) {
+        this.dataOptions = dataOptions;
     }
 }

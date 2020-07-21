@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.example.mathly.data.Post;
 import com.example.mathly.data.remote.APIService;
 import com.example.mathly.data.remote.ApiUtils;
+import com.example.mathly.data.remote.RetrofitClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,7 +42,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -50,6 +53,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import com.example.mathly.data.DataOptions;
 
 public class ScanImage extends AppCompatActivity {
 
@@ -150,13 +155,19 @@ public class ScanImage extends AppCompatActivity {
                 System.out.println("End");
 
 
-                mAPIService = ApiUtils.getAPIService();
+//                mAPIService = ApiUtils.getAPIService();
+
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("https://jsonplaceholder.typicode.com/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                mAPIService  = retrofit.create(APIService.class);
 
                 send_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if(!TextUtils.isEmpty(encodedImage)){
-                            sendPost(encodedImage);
+                            createPost(encodedImage);
                         }
                     }
                 });
@@ -177,40 +188,41 @@ public class ScanImage extends AppCompatActivity {
 
         }
     }
-    public void sendPost(String encodedImage){
-        mAPIService.savePost(encodedImage,1).enqueue(new Callback<Post>() {
+    public void createPost(String encodedImage){
+
+        List<String> list = new ArrayList<String>();
+        list.add("text");
+        list.add("data");
+        list.add("html");
+
+        DataOptions dataOptions = new DataOptions(true,true);
+        Post post = new Post(encodedImage,list, dataOptions );
+
+        mAPIService.createPost(post).enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
-                System.out.println("onResponse");
-                System.out.println(response.errorBody().toString());
 
                 if(response.isSuccessful()){
                     System.out.println(response.body().toString());
                     System.out.println("BITCH");
                     Log.i("tag","posted!" + response.body().toString());
                 }
+
             }
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
+
                 System.out.println("Failed to post it");
                 Log.e("tag", "YOU FAIL");
                 t.printStackTrace();
+
             }
         });
 
 
-
-
-
-
-
     }
-
-
-
-
-
+    
     private String getFileExt(Uri contentUri) {
 
         ContentResolver c = getContentResolver();

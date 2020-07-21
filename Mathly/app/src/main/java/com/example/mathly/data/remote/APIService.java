@@ -14,8 +14,11 @@ public interface APIService {
      *  http://jsonplaceholder.typicode.com/posts
      */
 
+//    @POST("/posts")
+//    @FormUrlEncoded
+//    Call<Post> savePost(@Field("base64") String base64,
+//                        @Field("userId") long userId);
+
     @POST("/posts")
-    @FormUrlEncoded
-    Call<Post> savePost(@Field("base64") String base64,
-                        @Field("userId") long userId);
+    Call<Post> createPost(@Body Post post);
 }
