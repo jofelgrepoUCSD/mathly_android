@@ -3,6 +3,9 @@ package com.example.mathly;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.options.AuthSignUpOptions;
+import com.amplifyframework.core.Amplify;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -10,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +35,26 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Amplify.Auth.fetchAuthSession(
+                result -> Log.i("AmplifyQuickstart", result.toString()),
+                error -> Log.e("AmplifyQuickstart", error.toString())
+        );
+
+
+//        Amplify.Auth.signUp(
+//                "jofelgrepo",
+//                "Password123",
+//                AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), "grepo.jofel@gmail.com").build(),
+//                result -> Log.i("AuthQuickStart", "Result: " + result.toString()),
+//                error -> Log.e("AuthQuickStart", "Sign up failed", error)
+//        );
+//
+//        Amplify.Auth.confirmSignUp(
+//                "jofelgrepo",
+//                "319196",
+//                result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
+//                error -> Log.e("AuthQuickstart", error.toString())
+//        );
 
         /*
             Added splash screen of APP

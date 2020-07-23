@@ -3,6 +3,12 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+
+    // Add to AwsCredentials
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "com.example.mathly"
         minSdkVersion 27
@@ -29,9 +35,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
 
 
+    //Add to AWS
+    implementation 'com.amplifyframework:core:1.1.1'
+
+    //Add to AWS
+    implementation 'com.amplifyframework:aws-auth-cognito:1.1.1'
 
 
     implementation 'com.google.android.material:material:1.0.0'
+
     implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.6.29'
     implementation 'com.amazonaws:aws-android-sdk-core:2.6.29'
     testImplementation 'junit:junit:4.12'
