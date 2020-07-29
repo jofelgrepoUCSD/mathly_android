@@ -41,6 +41,8 @@ dependencies {
     //Add to AWS
     implementation 'com.amplifyframework:aws-auth-cognito:1.1.1'
 
+    implementation 'com.android.support:appcompat-v7:29.0.0'
+
 
     implementation 'com.google.android.material:material:1.0.0'
 

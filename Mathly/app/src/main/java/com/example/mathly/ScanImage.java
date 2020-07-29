@@ -28,6 +28,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mathly.data.Post;
@@ -62,7 +63,8 @@ public class ScanImage extends AppCompatActivity {
     public static final int GALLERY_REQUEST_CODE = 105;
     private APIService mAPIService;
     ImageView selectedImage;
-    Button camera_button,gallery_button,send_button;
+    Button camera_button,gallery_button,send_button,retake_button;
+    TextView scan1,scan2,useorretake;
     String currentPhotoPath;
 
     @Override
@@ -75,6 +77,10 @@ public class ScanImage extends AppCompatActivity {
         gallery_button = findViewById(R.id.gallery_button);
         gallery_button = findViewById(R.id.gallery_button);
         send_button = findViewById(R.id.send);
+        retake_button = findViewById(R.id.retake);
+        scan1 = findViewById(R.id.scanorupload);
+        scan2 = findViewById(R.id.scanorupload2);
+        useorretake = findViewById(R.id.useretake_tv);
 
         camera_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +152,14 @@ public class ScanImage extends AppCompatActivity {
             Uri contentUri = Uri.fromFile(f);
             mediaScanIntent.setData(contentUri);
             this.sendBroadcast(mediaScanIntent);
+            selectedImage.setVisibility(View.VISIBLE);
+            send_button.setVisibility(View.VISIBLE);
+            camera_button.setVisibility(View.INVISIBLE);
+            gallery_button.setVisibility(View.INVISIBLE);
+            retake_button.setVisibility(View.VISIBLE);
+            scan1.setVisibility(View.INVISIBLE);
+            scan2.setVisibility(View.INVISIBLE);
+            useorretake.setVisibility(View.VISIBLE);
             try {
                 final InputStream imageStream = getContentResolver().openInputStream(contentUri);
                 final Bitmap bm = BitmapFactory.decodeStream(imageStream);

@@ -27,11 +27,38 @@ public class LogIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
-        initializeAWS();
+
+        AWSMobileClient.getInstance().initialize(getApplicationContext(), new Callback<UserStateDetails>() {
+
+            @Override
+            public void onResult(UserStateDetails userStateDetails) {
+                Log.i("tag", userStateDetails.getUserState().toString());
+                switch (userStateDetails.getUserState()){
+                    case SIGNED_IN:
+                        Intent i = new Intent(LogIn.this, HomeScreen.class);
+                        startActivity(i);
+                        break;
+                    case SIGNED_OUT:
+                        System.out.println("SIGNED OUT");
+                       // sendToLogin();
+                        showSignIn();
+                        break;
+                    default:
+                        AWSMobileClient.getInstance().signOut();
+                        showSignIn();
+                        break;
+
+                }
+            }
+            @Override
+            public void onError(Exception e) {
+                Log.e("tag", e.toString());
+            }
+        }); // End of AWSMobileClient
+        //initializeAWS();
 
     } // End of onCreate
-    public void sendToLogin(){
-
+    private void showSignIn(){
         eUsername = findViewById(R.id.et_name);
         ePassword = findViewById(R.id.et_password);
         bLogin = findViewById(R.id.but_login);
@@ -50,12 +77,7 @@ public class LogIn extends AppCompatActivity {
                         error -> Log.e("AuthQuickstart", error.toString())
                 );
             }
-
-        })); // end of button click
-        initializeAWS();
-
-    }
-    public void initializeAWS(){
+        }));
 
         AWSMobileClient.getInstance().initialize(getApplicationContext(), new Callback<UserStateDetails>() {
 
@@ -69,8 +91,14 @@ public class LogIn extends AppCompatActivity {
                         break;
                     case SIGNED_OUT:
                         System.out.println("SIGNED OUT");
-                        sendToLogin();
+                        // sendToLogin();
+                        showSignIn();
                         break;
+                    default:
+                        AWSMobileClient.getInstance().signOut();
+                        showSignIn();
+                        break;
+
                 }
             }
             @Override
@@ -79,7 +107,59 @@ public class LogIn extends AppCompatActivity {
             }
         }); // End of AWSMobileClient
 
+
     }
+
+//    public void sendToLogin(){
+//
+//        eUsername = findViewById(R.id.et_name);
+//        ePassword = findViewById(R.id.et_password);
+//        bLogin = findViewById(R.id.but_login);
+//
+//        bLogin.setOnClickListener((new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                String username = eUsername.getText().toString();
+//                String password = ePassword.getText().toString();
+//
+//                Amplify.Auth.signIn(
+//                        username,
+//                        password,
+//                        result -> System.out.println(result.isSignInComplete()),
+//                        error -> Log.e("AuthQuickstart", error.toString())
+//                );
+//            }
+//
+//        })); // end of button click
+////        initializeAWS();
+//
+//    }
+//    public void initializeAWS(){
+//
+//        AWSMobileClient.getInstance().initialize(getApplicationContext(), new Callback<UserStateDetails>() {
+//
+//            @Override
+//            public void onResult(UserStateDetails userStateDetails) {
+//                Log.i("tag", userStateDetails.getUserState().toString());
+//                switch (userStateDetails.getUserState()){
+//                    case SIGNED_IN:
+//                        Intent i = new Intent(LogIn.this, HomeScreen.class);
+//                        startActivity(i);
+//                        break;
+//                    case SIGNED_OUT:
+//                        System.out.println("SIGNED OUT");
+//                        sendToLogin();
+//                        break;
+//                }
+//            }
+//            @Override
+//            public void onError(Exception e) {
+//                Log.e("tag", e.toString());
+//            }
+//        }); // End of AWSMobileClient
+//
+//    }
 
 }
 

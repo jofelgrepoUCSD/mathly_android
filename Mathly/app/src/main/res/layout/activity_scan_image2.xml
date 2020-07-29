@@ -4,60 +4,151 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#863AF0"
+    android:background="@drawable/grad1"
     tools:context=".ScanImage">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="296dp"
-        android:layout_height="425dp"
+        android:layout_width="303dp"
+        android:layout_height="398dp"
+        android:background="#007332D6"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.204"
+        app:layout_constraintVertical_bias="0.023"
         app:srcCompat="@color/colorPrimary" />
 
     <Button
         android:id="@+id/camera_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#09D1BD"
+        android:layout_width="147dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded2"
+        android:fontFamily="@font/noto_sans_bold"
         android:text="Scan"
         android:textColor="#FFFFFF"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.213"
+        app:layout_constraintHorizontal_bias="0.121"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.799" />
+        app:layout_constraintVertical_bias="0.873" />
 
     <Button
         android:id="@+id/gallery_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#F03A7F"
+        android:layout_width="147dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded2"
+        android:fontFamily="@font/noto_sans_bold"
         android:text="Upload "
         android:textColor="#FFFFFF"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.851"
+        app:layout_constraintHorizontal_bias="0.878"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.799" />
+        app:layout_constraintVertical_bias="0.873" />
+
 
     <Button
         android:id="@+id/send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
+        android:layout_width="125dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded2"
+        android:fontFamily="@font/noto_sans_bold"
+        android:text="Use image"
+        android:visibility="invisible"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.153"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+        app:layout_constraintVertical_bias="0.958" />
+
+    <Button
+        android:id="@+id/retake"
+        android:layout_width="125dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded2"
+        android:fontFamily="@font/noto_sans_bold"
+        android:text="Retake"
+        android:visibility="invisible"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.811"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.958" />
+
+    <ImageView
+        android:layout_width="411dp"
+        android:layout_height="453dp"
+        android:layout_marginTop="332dp"
+        android:src="@drawable/whiecard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="411dp"
+        android:layout_height="453dp"
+        android:layout_marginTop="376dp"
+        android:src="@drawable/whiecard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+    <TextView
+        android:id="@+id/scanorupload"
+        android:layout_width="436dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="68dp"
+        android:fontFamily="@font/noto_sans"
+        android:text="Simply scan or upload"
+        android:textSize="26dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.708" />
+
+    <TextView
+        android:id="@+id/scanorupload2"
+        android:layout_width="444dp"
+        android:layout_height="98dp"
+        android:layout_marginStart="68dp"
+        android:fontFamily="@font/noto_sans"
+        android:text="your homework here!"
+        android:textSize="26dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanorupload"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/useretake_tv"
+        android:layout_width="274dp"
+        android:layout_height="65dp"
+        android:fontFamily="@font/noto_sans"
+        android:text="Use or retake here"
+        android:textSize="26dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.644"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.401" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
