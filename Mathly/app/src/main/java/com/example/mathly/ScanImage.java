@@ -8,48 +8,39 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.icu.text.SimpleDateFormat;
-import android.icu.text.UnicodeSetSpanner;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.INotificationSideChannel;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mathly.data.Post;
 import com.example.mathly.data.remote.APIService;
-import com.example.mathly.data.remote.ApiUtils;
-import com.example.mathly.data.remote.RetrofitClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,9 +53,11 @@ public class ScanImage extends AppCompatActivity {
     public static final int REQUEST_CODE = 102;
     public static final int GALLERY_REQUEST_CODE = 105;
     private APIService mAPIService;
+    LinearLayout initial_layout, result_layout, top_layout;
     ImageView selectedImage;
-    Button camera_button,gallery_button,send_button,retake_button;
-    TextView scan1,scan2,useorretake;
+    ImageButton camera_button,gallery_button,send_button,retake_button;
+//    Button camera_button,gallery_button,send_button,retake_button;
+    TextView scan1,scan2,useorretake,tv1,tv2;
     String currentPhotoPath;
 
     @Override
@@ -72,15 +65,30 @@ public class ScanImage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_image2);
 
-        selectedImage = findViewById(R.id.imageView);
-        camera_button = findViewById(R.id.camera_button);
-        gallery_button = findViewById(R.id.gallery_button);
-        gallery_button = findViewById(R.id.gallery_button);
-        send_button = findViewById(R.id.send);
-        retake_button = findViewById(R.id.retake);
-        scan1 = findViewById(R.id.scanorupload);
-        scan2 = findViewById(R.id.scanorupload2);
-        useorretake = findViewById(R.id.useretake_tv);
+//        selectedImage = findViewById(R.id.imageView);
+//        camera_button = findViewById(R.id.camera_button);
+//        gallery_button = findViewById(R.id.gallery_button);
+//        gallery_button = findViewById(R.id.gallery_button);
+//        send_button = findViewById(R.id.send);
+//        retake_button = findViewById(R.id.retake);
+//        scan1 = findViewById(R.id.scanorupload);
+//        scan2 = findViewById(R.id.scanorupload2);
+//        useorretake = findViewById(R.id.useretake_tv);
+
+        selectedImage = findViewById(R.id.new_image_view);
+        camera_button = findViewById(R.id.scan_button);
+        gallery_button = findViewById(R.id.upload_button);
+        send_button = findViewById(R.id.send_button);
+        retake_button = findViewById(R.id.send_button);
+
+        tv1 = findViewById(R.id.tv1);
+        tv2 = findViewById(R.id.tv2);
+
+        initial_layout = findViewById(R.id.allcontent);
+        result_layout = findViewById(R.id.layout_result);
+        top_layout = findViewById(R.id.top_layout);
+
+
 
         camera_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,9 +165,17 @@ public class ScanImage extends AppCompatActivity {
             camera_button.setVisibility(View.INVISIBLE);
             gallery_button.setVisibility(View.INVISIBLE);
             retake_button.setVisibility(View.VISIBLE);
-            scan1.setVisibility(View.INVISIBLE);
-            scan2.setVisibility(View.INVISIBLE);
-            useorretake.setVisibility(View.VISIBLE);
+            tv1.setVisibility(View.INVISIBLE);
+
+            initial_layout.setVisibility(View.INVISIBLE);
+            result_layout.setVisibility(View.VISIBLE);
+            top_layout.setVisibility(View.VISIBLE);
+
+//
+//            tv2.setVisibility(View.INVISIBLE);
+//            scan1.setVisibility(View.INVISIBLE);
+//            scan2.setVisibility(View.INVISIBLE);
+//            useorretake.setVisibility(View.VISIBLE);
             try {
                 final InputStream imageStream = getContentResolver().openInputStream(contentUri);
                 final Bitmap bm = BitmapFactory.decodeStream(imageStream);

@@ -35,7 +35,7 @@ public class LogIn extends AppCompatActivity {
                 Log.i("tag", userStateDetails.getUserState().toString());
                 switch (userStateDetails.getUserState()){
                     case SIGNED_IN:
-                        Intent i = new Intent(LogIn.this, HomeScreen.class);
+                        Intent i = new Intent(LogIn.this, ScanImage.class);
                         startActivity(i);
                         break;
                     case SIGNED_OUT:
