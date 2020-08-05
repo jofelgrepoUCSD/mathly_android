@@ -9,6 +9,7 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,9 +18,10 @@ import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Base64;
+//import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -29,17 +31,31 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//import com.amazonaws.util.Base64;
 import com.example.mathly.data.Post;
 import com.example.mathly.data.remote.APIService;
 
+import org.apache.commons.codec.binary.Base64;
+//import org.apache.commons.io.FileUtils;
+
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,6 +63,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.example.mathly.data.DataOptions;
+import com.example.mathly.data.remote.ApiUtils;
 
 public class ScanImage extends AppCompatActivity {
 
@@ -64,16 +81,6 @@ public class ScanImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_image2);
-
-//        selectedImage = findViewById(R.id.imageView);
-//        camera_button = findViewById(R.id.camera_button);
-//        gallery_button = findViewById(R.id.gallery_button);
-//        gallery_button = findViewById(R.id.gallery_button);
-//        send_button = findViewById(R.id.send);
-//        retake_button = findViewById(R.id.retake);
-//        scan1 = findViewById(R.id.scanorupload);
-//        scan2 = findViewById(R.id.scanorupload2);
-//        useorretake = findViewById(R.id.useretake_tv);
 
         selectedImage = findViewById(R.id.new_image_view);
         camera_button = findViewById(R.id.scan_button);
@@ -135,10 +142,7 @@ public class ScanImage extends AppCompatActivity {
         }
     }
 
-//    public void openCamera () {
-//        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        startActivityForResult(camera, REQUEST_CODE);
-//    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -171,33 +175,35 @@ public class ScanImage extends AppCompatActivity {
             result_layout.setVisibility(View.VISIBLE);
             top_layout.setVisibility(View.VISIBLE);
 
-//
-//            tv2.setVisibility(View.INVISIBLE);
-//            scan1.setVisibility(View.INVISIBLE);
-//            scan2.setVisibility(View.INVISIBLE);
-//            useorretake.setVisibility(View.VISIBLE);
+
+
             try {
                 final InputStream imageStream = getContentResolver().openInputStream(contentUri);
                 final Bitmap bm = BitmapFactory.decodeStream(imageStream);
-                final String encodedImage = encodeImge(bm);
-                System.out.println("Worked");
-//                System.out.println(encodedImage);
-                System.out.println("End");
+                String encodedImage = encodeImge(bm);
+               // String encodedImages = apachebase64(currentPhotoPath);
+              //  String encodedImage = encodeFilePath(f);
 
-
-//                mAPIService = ApiUtils.getAPIService();
 
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://jsonplaceholder.typicode.com/")
+                        .baseUrl("https://qonbfsyvbf.execute-api.us-west-1.amazonaws.com/")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
+
+
                 mAPIService  = retrofit.create(APIService.class);
+
+                String practice = "data:image/png;base64,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";
+
+
 
                 send_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(!TextUtils.isEmpty(encodedImage)){
-                            createPost(encodedImage);
+
+                        if(!TextUtils.isEmpty(practice)){
+                            System.out.println("Here");
+                            createPost(practice);
                         }
                     }
                 });
@@ -216,26 +222,53 @@ public class ScanImage extends AppCompatActivity {
             Log.d("tag","Gallery Image Uri is: " + imageFileName);
             selectedImage.setImageURI(contentUri);
 
+
+//            try {
+//                final InputStream imageStream = getContentResolver().openInputStream(contentUri);
+//                final Bitmap bm = BitmapFactory.decodeStream(imageStream);
+//               // final String encodedImage = encodeImge(bm);
+//
+//                System.out.println("On gallery");
+//                //   System.out.println(encodedImage);
+//                System.out.println("End");
+//                String baseconnect = "data:image/jpeg;base64,";
+//                System.out.println(encodedImage);
+//
+//                send_button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//
+//                        if(!TextUtils.isEmpty(encodedImage)){
+//                            System.out.println("Here");
+//                            createPost(encodedImage);
+//                        }
+//                    }
+//                });
+//
+//
+//            } catch (FileNotFoundException e) {
+//
+//                e.printStackTrace();
+//            }
+
+
+
         }
     }
     public void createPost(String encodedImage){
 
-        List<String> list = new ArrayList<String>();
-        list.add("text");
-        list.add("data");
-        list.add("html");
+        Post post = new Post("first post12345",encodedImage,"type",69);
+        Call<Post> call = mAPIService.createPost(post);
 
-        DataOptions dataOptions = new DataOptions(true,true);
-        Post post = new Post(encodedImage,list, dataOptions );
-
-        mAPIService.createPost(post).enqueue(new Callback<Post>() {
+        call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
-
+                if(!response.isSuccessful()){
+                    System.out.println("Code:" + response.code());
+                }
+                System.out.println("Code :" + response.code());
                 if(response.isSuccessful()){
-                    System.out.println(response.body().toString());
-                    System.out.println("BITCH");
-                    Log.i("tag","posted!" + response.body().toString());
+                    System.out.println("Bitch");
                 }
 
             }
@@ -243,13 +276,8 @@ public class ScanImage extends AppCompatActivity {
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
 
-                System.out.println("Failed to post it");
-                Log.e("tag", "YOU FAIL");
-                t.printStackTrace();
-
             }
         });
-
 
     }
     
@@ -294,14 +322,55 @@ public class ScanImage extends AppCompatActivity {
 
 
     }
-    private String encodeImge(Bitmap bm){
+    private String encodeImge(Bitmap bm) {
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        bm.compress(Bitmap.CompressFormat.JPEG,10,baos);
         byte[] b = baos.toByteArray();
-        String encImage = Base64.encodeToString(b,Base64.DEFAULT);
+        String encImage = android.util.Base64.encodeToString(b, android.util.Base64.DEFAULT);
+        encImage = "data:image/jpeg;base64," + encImage;
+        System.out.println(encImage);
 
         return encImage;
+
     }
+    // Tried Jeremey's link 1
+    private String apachebase64(String path){
+
+        String encodedString = "";
+        try {
+            byte [] fileContent = org.apache.commons.io.FileUtils.readFileToByteArray(new File(path));
+            encodedString = Base64.encodeBase64String(fileContent);
+            System.out.println(encodedString);
+
+          } catch (Exception e) {
+              return null;
+        }
+
+        return encodedString;
+    }
+    // Tried Jeremy's Link 2
+    private String encodeFilePath(File file){
+
+        String encodedfile = null;
+        try {
+            FileInputStream fileInputStreamReader = new FileInputStream(file);
+            byte[] bytes = new byte[(int)file.length()];
+            fileInputStreamReader.read(bytes);
+            encodedfile = new String(java.util.Base64.getEncoder().encodeToString(bytes));
+            System.out.println(encodedfile);
+          //  encodedfile = Base64.encodeBase64(bytes).toString();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return encodedfile;
+    }
+
 
 
 }

@@ -6,7 +6,7 @@ public class ApiUtils {
 
     private ApiUtils(){}
 
-    public static final String BASE_URL = "https://api.mathpix.com/v3/text";
+    public static final String BASE_URL = "https://qonbfsyvbf.execute-api.us-west-1.amazonaws.com/Prod/api/pictures/";
 
     public static APIService getAPIService(){
         return RetrofitClient.getClient(BASE_URL).create(APIService.class);
